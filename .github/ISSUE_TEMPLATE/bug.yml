@@ -1,0 +1,35 @@
+name: Bug report
+description: Report incorrect parsing, comparison, or output
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Never attach a real session log. Reduce the issue to synthetic JSONL with all private content removed.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Session provider
+      options: [Codex, Claude Code, Unknown or mixed]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Remove prompts, responses, source code, usernames, repository names, IDs, and absolute paths.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true

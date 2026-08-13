@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+reports/
+*.html
+!docs/*.html
+.DS_Store
+*.log
+.env
+.next/
+.vinext/
+.wrangler/
+.openai/

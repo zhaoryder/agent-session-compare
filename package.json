@@ -1,0 +1,35 @@
+{
+  "name": "agent-session-compare",
+  "version": "0.1.0",
+  "description": "A privacy-first diff for Codex and Claude Code sessions.",
+  "type": "module",
+  "bin": { "agent-session-compare": "dist/cli.js" },
+  "exports": "./dist/index.js",
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsup",
+    "check": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:coverage": "c8 npm test",
+    "prepare": "npm run build",
+    "prepack": "npm run check && npm test && npm run build"
+  },
+  "engines": { "node": ">=20" },
+  "keywords": ["codex", "claude-code", "coding-agent", "jsonl", "session", "developer-tools"],
+  "author": "zhaoryder",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/zhaoryder/agent-session-compare.git" },
+  "bugs": { "url": "https://github.com/zhaoryder/agent-session-compare/issues" },
+  "homepage": "https://github.com/zhaoryder/agent-session-compare#readme",
+  "dependencies": {
+    "commander": "^14.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "c8": "^10.1.3",
+    "tsx": "^4.20.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compare Agent Sessions"
+  short_description: "Compare local Codex and Claude Code runs"
+  default_prompt: "Use $compare-agent-sessions to compare my latest local Codex and Claude Code sessions safely."

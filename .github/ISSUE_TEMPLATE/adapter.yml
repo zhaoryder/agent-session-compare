@@ -1,0 +1,24 @@
+name: Provider or schema support
+description: Propose a sanitized adapter improvement
+title: "adapter: "
+labels: [adapter]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Provider and version
+    validations:
+      required: true
+  - type: textarea
+    id: records
+    attributes:
+      label: Relevant record shapes
+      description: Show keys and data types with synthetic values. Do not paste a real session.
+    validations:
+      required: true
+  - type: textarea
+    id: metric
+    attributes:
+      label: Metric enabled or corrected
+    validations:
+      required: true
