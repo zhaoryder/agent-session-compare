@@ -9,8 +9,9 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "rootDir": "src",
     "outDir": "dist",
     "skipLibCheck": true
   },
-  "include": ["src", "tests", "tsup.config.ts"]
+  "include": ["src"]
 }

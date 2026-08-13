@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
 import { Command, Option } from "commander";
@@ -27,7 +28,7 @@ function providerOption(flags: string, description: string): Option {
 const program = new Command()
   .name("agent-session-compare")
   .description("A privacy-first diff for Codex and Claude Code sessions")
-  .version("0.1.0")
+  .version("0.1.1")
   .showHelpAfterError()
   .addHelpText("after", "\nSession text is never included in terminal, JSON, or HTML output.");
 
