@@ -3,8 +3,6 @@
   <p><strong>See whether your next coding-agent run actually got better.</strong></p>
   <p>
     <a href="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml"><img src="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-    <a href="https://www.npmjs.com/package/agent-session-compare"><img src="https://img.shields.io/npm/v/agent-session-compare?color=ff73b5" alt="npm version"></a>
-    <a href="https://www.npmjs.com/package/agent-session-compare"><img src="https://img.shields.io/npm/dm/agent-session-compare?color=61dafb" alt="npm downloads"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6ee7a8" alt="MIT License"></a>
     <img src="https://img.shields.io/badge/telemetry-none-61dafb" alt="No telemetry">
   </p>
@@ -19,26 +17,26 @@ You changed `AGENTS.md`, rewrote a prompt, or tried a new workflow. The next Cod
 Preview the report with safe built-in data:
 
 ```bash
-npx agent-session-compare demo
+npx --yes github:zhaoryder/agent-session-compare demo
 ```
 
 Compare your two newest Codex sessions:
 
 ```bash
-npx agent-session-compare latest
+npx --yes github:zhaoryder/agent-session-compare latest
 ```
 
 Or list recent sessions and choose an exact pair:
 
 ```bash
-npx agent-session-compare list
+npx --yes github:zhaoryder/agent-session-compare list
 agent-session-compare compare <before.jsonl> <after.jsonl>
 ```
 
 Save a standalone report you can inspect or share:
 
 ```bash
-npx agent-session-compare latest --html report.html
+npx --yes github:zhaoryder/agent-session-compare latest --html report.html
 ```
 
 <img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/report-demo.png" alt="Standalone HTML report comparing two coding-agent sessions" width="900">
