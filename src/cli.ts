@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { Command, Option } from "commander";
 import { parseSessionFile } from "./adapters.js";
 import { compareSessions } from "./compare.js";
 import { DEMO_LEFT, DEMO_RIGHT } from "./demo.js";
-import { latestSession } from "./discovery.js";
+import { latestSession, listSessions } from "./discovery.js";
 import { renderHtml, renderTerminal } from "./report.js";
 import type { Provider, SessionComparison } from "./types.js";
 
@@ -47,15 +48,40 @@ program.command("compare")
   });
 
 program.command("latest")
-  .description("Compare the newest local sessions")
+  .description("Compare the two newest local sessions (Codex by default)")
   .addOption(new Option("--left <provider>", "left provider").choices(["codex", "claude"]).default("codex"))
-  .addOption(new Option("--right <provider>", "right provider").choices(["codex", "claude"]).default("claude"))
+  .addOption(new Option("--right <provider>", "right provider").choices(["codex", "claude"]).default("codex"))
   .option("--json", "print stable JSON")
   .option("--html <file>", "write a standalone HTML report")
   .action((options: OutputOptions & { left: Exclude<Provider, "unknown">; right: Exclude<Provider, "unknown"> }) => {
     const leftPath = latestSession(options.left);
     const rightPath = latestSession(options.right, options.left === options.right ? leftPath : undefined);
     writeOutput(compareSessions(parseSessionFile(leftPath, options.left), parseSessionFile(rightPath, options.right)), options);
+  });
+
+program.command("list")
+  .description("List local sessions so you can choose an exact pair")
+  .addOption(new Option("--provider <provider>", "session provider").choices(["codex", "claude"]).default("codex"))
+  .option("--limit <count>", "maximum sessions to show", "10")
+  .option("--json", "print stable JSON")
+  .action((options: { provider: Exclude<Provider, "unknown">; limit: string; json?: boolean }) => {
+    const limit = Number.parseInt(options.limit, 10);
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new Error("--limit must be an integer from 1 to 100");
+    const sessions = listSessions(options.provider).slice(0, limit).map((session) => ({
+      ...session,
+      filePath: session.filePath.startsWith(os.homedir()) ? `~${session.filePath.slice(os.homedir().length)}` : session.filePath,
+    }));
+    if (options.json) {
+      process.stdout.write(`${JSON.stringify(sessions, null, 2)}\n`);
+      return;
+    }
+    if (sessions.length === 0) throw new Error(`No ${options.provider} sessions found`);
+    process.stdout.write(`modified (local)         size      session\n`);
+    for (const session of sessions) {
+      const modified = new Date(session.modifiedAt).toLocaleString("sv-SE").replace("T", " ");
+      const size = `${Math.max(1, Math.round(session.sizeBytes / 1024))} KB`.padStart(8);
+      process.stdout.write(`${modified}  ${size}  ${session.filePath}\n`);
+    }
   });
 
 program.command("demo")

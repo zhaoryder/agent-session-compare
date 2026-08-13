@@ -4,6 +4,8 @@ All notable changes are documented here.
 
 ## 0.1.2 - 2026-08-13
 
+- Make single-agent before/after comparison the default product flow.
+- Compare the two newest Codex sessions when `latest` has no provider flags.
 - Add a real browser-rendered HTML report screenshot.
 - Clarify npm installation status, runtime networking, `latest` selection, and large-log behavior.
 - Add sanitized real-shape fixtures and end-to-end privacy coverage.

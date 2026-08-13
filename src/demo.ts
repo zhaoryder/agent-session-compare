@@ -1,7 +1,7 @@
 import type { SessionSummary } from "./types.js";
 
 export const DEMO_LEFT: SessionSummary = {
-  schemaVersion: 1, provider: "codex", source: "codex-run.jsonl",
+  schemaVersion: 1, provider: "codex", source: "before-agents-md.jsonl",
   startedAt: "2026-08-13T02:00:00.000Z", endedAt: "2026-08-13T02:03:12.000Z",
   durationMs: 192000, turns: 5, messages: { user: 5, assistant: 9 },
   tools: [
@@ -14,12 +14,12 @@ export const DEMO_LEFT: SessionSummary = {
 };
 
 export const DEMO_RIGHT: SessionSummary = {
-  schemaVersion: 1, provider: "claude", source: "claude-run.jsonl",
+  schemaVersion: 1, provider: "codex", source: "after-agents-md.jsonl",
   startedAt: "2026-08-13T02:10:00.000Z", endedAt: "2026-08-13T02:14:28.000Z",
   durationMs: 268000, turns: 6, messages: { user: 6, assistant: 12 },
   tools: [
-    { name: "Bash", calls: 11, errors: 2, durationMs: 0 },
-    { name: "Edit", calls: 5, errors: 0, durationMs: 0 },
+    { name: "exec_command", calls: 11, errors: 2, durationMs: 52000 },
+    { name: "apply_patch", calls: 5, errors: 0, durationMs: 12000 },
   ],
   filesChanged: ["src/cli.ts", "src/report.ts", "tests/cli.test.ts"], errors: 2,
   tokens: { input: 22300, cachedInput: 6100, output: 5300, reasoning: 0, total: 33700 },

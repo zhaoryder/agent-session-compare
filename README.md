@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/hero.svg" alt="agent-session-compare — same task, different agent" width="820">
-  <p><strong>A privacy-first diff for Codex and Claude Code sessions.</strong></p>
+  <img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/hero.svg" alt="agent-session-compare — compare two coding-agent runs" width="820">
+  <p><strong>See whether your next coding-agent run actually got better.</strong></p>
   <p>
     <a href="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml"><img src="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="https://www.npmjs.com/package/agent-session-compare"><img src="https://img.shields.io/npm/v/agent-session-compare?color=ff73b5" alt="npm version"></a>
@@ -10,76 +10,96 @@
   </p>
 </div>
 
-You ran the same task with two coding agents. One felt faster. The other looked busier. Which one actually used fewer turns, hit fewer errors, and touched the intended files?
+You changed `AGENTS.md`, rewrote a prompt, or tried a new workflow. The next Codex run felt better—but was it?
 
-`agent-session-compare` turns local JSONL logs into a deterministic terminal diff or a standalone HTML report. It compares observable work and deliberately avoids a subjective “winner” score.
+`agent-session-compare` compares two local coding-agent sessions and shows what changed: turns, tool calls, errors, files touched, elapsed time, and reported tokens. You only need one agent. Comparing Codex with itself is the default; comparing Codex with Claude Code is optional.
 
 ## Try it in 30 seconds
 
-No account, API key, or session file is needed for the built-in demo. After the npm package is published, the short command will be:
+Preview the report with safe built-in data:
 
 ```bash
 npx agent-session-compare demo
 ```
 
-Until then, use the repository build: `npx --yes github:zhaoryder/agent-session-compare demo`.
-
-Export the same comparison as a single offline HTML file:
+Compare your two newest Codex sessions:
 
 ```bash
-npx agent-session-compare demo --html report.html
+npx agent-session-compare latest
 ```
 
-<img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/report-demo.png" alt="Standalone HTML comparison report showing Codex and Claude session metrics" width="900">
-
-When both tools are installed locally, compare their newest sessions:
+Or list recent sessions and choose an exact pair:
 
 ```bash
-npx agent-session-compare latest \
-  --left codex \
-  --right claude \
-  --html report.html
+npx agent-session-compare list
+agent-session-compare compare <before.jsonl> <after.jsonl>
 ```
+
+Save a standalone report you can inspect or share:
+
+```bash
+npx agent-session-compare latest --html report.html
+```
+
+<img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/report-demo.png" alt="Standalone HTML report comparing two coding-agent sessions" width="900">
 
 > [!WARNING]
-> `latest` selects sessions by file modification time. It cannot know whether both sessions performed the same task. Verify the source sessions before interpreting the comparison.
+> `latest` selects sessions by file modification time. It cannot know whether both sessions performed the same task. Check the source filenames before treating the result as a before/after comparison.
 
-Or point at any two logs:
+## Useful experiments
+
+Run the same small task twice and change one thing:
+
+- before and after editing `AGENTS.md`;
+- a vague prompt versus a prompt with acceptance criteria;
+- a fresh run versus a run using a reusable skill;
+- one Codex model or reasoning setting versus another;
+- Codex versus Claude Code, if you use both.
+
+Then point the CLI at the exact session files:
 
 ```bash
-agent-session-compare compare first.jsonl second.jsonl
-agent-session-compare compare first.jsonl second.jsonl --json
+agent-session-compare compare before.jsonl after.jsonl
+agent-session-compare compare before.jsonl after.jsonl --json
+agent-session-compare compare before.jsonl after.jsonl --html report.html
+```
+
+For an optional cross-agent comparison:
+
+```bash
+agent-session-compare latest --left codex --right claude
 ```
 
 ## What it measures
 
-| Signal | Codex | Claude Code | Notes |
-| --- | :---: | :---: | --- |
-| Turns and messages | ✓ | ✓ | Structural records, not message text |
-| Tool calls and tool errors | ✓ | ✓ | Grouped by tool name |
-| Files changed | ✓ | ✓ | Patch events and edit/write tools |
-| Elapsed time | ✓ | ✓ | Native duration when present, timestamps otherwise |
-| Token usage | ✓ | ✓ | Shown only when the log reports it |
-| Standalone HTML | ✓ | ✓ | No external scripts, fonts, or analytics |
+| Signal | What it tells you |
+| --- | --- |
+| Turns and messages | How much back-and-forth the run needed |
+| Tool calls and errors | Whether the agent worked cleanly or retried repeatedly |
+| Files changed | Whether both runs stayed near the intended scope |
+| Elapsed time | How long the recorded work took |
+| Token usage | The amount reported by the provider, when available |
+| File overlap | Which files both runs touched and which were unique |
 
-Metrics are intentionally descriptive. A shorter session is not automatically a better session, and different providers may account for tokens differently.
+These are clues, not a quality score. A shorter run can still produce worse code, and providers may count tokens differently. The tool deliberately does not declare a winner.
 
-## Privacy model
+## Privacy
 
-Session logs can contain source code, prompts, tool output, and local paths. This tool is designed around that risk:
+Session logs can contain source code, prompts, tool output, and local paths. This project treats the original files as sensitive:
 
-- After installation, comparisons run entirely locally and the CLI makes no runtime network requests.
-- Prompt, response, reasoning, tool input, and tool output text are never copied into reports.
+- After installation, comparisons run locally with no runtime network requests.
+- Reports never include prompt, response, reasoning, tool input, or tool output text.
 - Absolute paths outside the recorded working directory become `<absolute>/filename`.
-- JSON and HTML use the same redacted summary schema.
-- There is no telemetry and no AI model call.
+- Terminal, JSON, and HTML use the same redacted summary.
+- There is no telemetry and no model call.
 
-Still treat the original JSONL files as sensitive. Review an HTML or JSON report before sharing it, especially when filenames are confidential.
+Filenames can still be confidential. Review any generated report before sharing it.
 
 ## Commands
 
 ```text
 agent-session-compare demo [--json] [--html report.html]
+agent-session-compare list [--provider codex|claude] [--limit 10] [--json]
 agent-session-compare latest [--left codex|claude] [--right codex|claude]
 agent-session-compare compare <left.jsonl> <right.jsonl>
   [--left-provider auto|codex|claude]
@@ -92,41 +112,31 @@ Default discovery paths:
 - Codex: `~/.codex/sessions/**/*.jsonl`
 - Claude Code: `~/.claude/projects/**/*.jsonl`
 
-Schemas evolve. Unknown records are skipped, malformed lines are counted, and the report includes warnings instead of silently inventing metrics. The current parser reads each input file into memory; avoid using it on untrusted or unexpectedly large logs.
+Unknown records are skipped, malformed lines are counted, and warnings appear instead of invented metrics. The current parser reads each input file into memory; avoid untrusted or unexpectedly large logs.
 
-## Why this exists
+## Scope
 
-Agent tooling has plenty of session browsers and replay UIs. Pairwise comparison is a different job: answer a narrow question with a small, reviewable artifact.
+This project is a small, reviewable session diff. It is not a benchmark harness, live monitor, session browser, migrator, or LLM judge.
 
-Good uses include:
-
-- comparing prompts or `AGENTS.md` changes across repeated tasks;
-- checking whether a new workflow reduced retries and tool errors;
-- attaching neutral execution evidence to an agent-evaluation issue;
-- discussing agent behavior without uploading the underlying conversation.
-
-This is not a benchmark harness, live monitor, session migrator, or LLM judge.
+The library API exports the parsers, discovery helpers, comparison function, and renderers for tools that need the normalized metrics.
 
 ## Development
 
 ```bash
 npm install
 npm run check
-npm test
 npm run build
+npm test
 node dist/cli.js demo --html reports/demo.html
 ```
 
-Node.js 20 or newer is required. The public library API exports the parsers, discovery helpers, comparison function, and renderers from `agent-session-compare`.
+Node.js 20 or newer is required. See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing an adapter; small, sanitized fixtures are especially useful.
 
 ## Roadmap
 
-- fixture corpus covering additional Codex and Claude Code log versions;
-- optional `--task` labels for repeated experiments;
-- machine-readable comparison thresholds for CI;
+- task labels for repeatable before/after experiments;
+- streaming support for very large logs;
 - adapters contributed for other local coding agents.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a new adapter. Small, sanitized fixtures are especially valuable.
 
 ## License
 

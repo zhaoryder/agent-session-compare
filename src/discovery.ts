@@ -3,6 +3,13 @@ import os from "node:os";
 import path from "node:path";
 import type { Provider } from "./types.js";
 
+export interface SessionCandidate {
+  provider: Exclude<Provider, "unknown">;
+  filePath: string;
+  modifiedAt: string;
+  sizeBytes: number;
+}
+
 function collectJsonl(directory: string, output: string[]): void {
   if (!fs.existsSync(directory)) return;
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -19,13 +26,18 @@ export function sessionDirectory(provider: Exclude<Provider, "unknown">): string
 }
 
 export function latestSession(provider: Exclude<Provider, "unknown">, exclude?: string): string {
-  const files: string[] = [];
-  const directory = sessionDirectory(provider);
-  collectJsonl(directory, files);
+  const candidates = listSessions(provider);
   const normalizedExclude = exclude ? path.resolve(exclude) : undefined;
-  const candidates = files.filter((file) => path.resolve(file) !== normalizedExclude);
-  candidates.sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
-  const latest = candidates[0];
-  if (!latest) throw new Error(`No ${provider} JSONL sessions found under ${directory}`);
+  const latest = candidates.find((candidate) => path.resolve(candidate.filePath) !== normalizedExclude)?.filePath;
+  if (!latest) throw new Error(`No ${provider} JSONL sessions found under ${sessionDirectory(provider)}`);
   return latest;
+}
+
+export function listSessions(provider: Exclude<Provider, "unknown">): SessionCandidate[] {
+  const files: string[] = [];
+  collectJsonl(sessionDirectory(provider), files);
+  return files.map((filePath) => {
+    const stats = fs.statSync(filePath);
+    return { provider, filePath, modifiedAt: stats.mtime.toISOString(), sizeBytes: stats.size };
+  }).sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt));
 }

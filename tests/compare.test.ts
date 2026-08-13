@@ -11,6 +11,8 @@ test("computes stable deltas and file overlap", () => {
   assert.deepEqual(comparison.sharedFiles, ["src/cli.ts", "tests/cli.test.ts"]);
   assert.deepEqual(comparison.onlyLeftFiles, ["src/index.ts"]);
   assert.deepEqual(comparison.onlyRightFiles, ["src/report.ts"]);
+  assert.equal(comparison.left.provider, "codex");
+  assert.equal(comparison.right.provider, "codex");
 });
 
 test("renders terminal and standalone HTML reports", () => {
@@ -21,6 +23,8 @@ test("renders terminal and standalone HTML reports", () => {
   assert.match(terminal, /33,000/);
   assert.match(html, /<!doctype html>/);
   assert.match(html, /Local-only/);
+  assert.match(html, /before-agents-md/);
+  assert.match(html, /after-agents-md/);
   assert.match(html, /application\/json/);
   assert.doesNotMatch(html, /https?:\/\/[^<]*\.(js|css)/);
   assert.doesNotMatch(html, /FIXTURE_PRIVATE|\/Users\/|C:\\workspace/);
