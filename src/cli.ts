@@ -28,7 +28,7 @@ function providerOption(flags: string, description: string): Option {
 const program = new Command()
   .name("agent-session-compare")
   .description("A privacy-first diff for Codex and Claude Code sessions")
-  .version("0.1.1")
+  .version("0.1.2")
   .showHelpAfterError()
   .addHelpText("after", "\nSession text is never included in terminal, JSON, or HTML output.");
 

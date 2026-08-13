@@ -22,6 +22,15 @@ export function toTimestamp(value: unknown): number | undefined {
 }
 
 export function safeRelative(filePath: string, cwd?: string): string {
+  const windowsAbsolute = /^[A-Za-z]:[\\/]/.test(filePath);
+  const windowsCwd = cwd && /^[A-Za-z]:[\\/]/.test(cwd);
+  if (windowsAbsolute) {
+    if (windowsCwd) {
+      const relative = path.win32.relative(cwd, filePath);
+      if (relative && !relative.startsWith("..") && !path.win32.isAbsolute(relative)) return normalizePath(relative);
+    }
+    return `<absolute>/${path.win32.basename(filePath)}`;
+  }
   if (!path.isAbsolute(filePath)) return normalizePath(filePath);
   if (cwd) {
     const relative = path.relative(cwd, filePath);

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 import { parseSessionText } from "../src/adapters.js";
 
@@ -54,4 +56,27 @@ test("skips malformed records and reports an unknown schema", () => {
   assert.equal(summary.provider, "unknown");
   assert.equal(summary.malformedRecords, 1);
   assert.equal(summary.warnings.length, 2);
+});
+
+test("parses sanitized real-shape fixtures and redacts Windows paths", () => {
+  const fixture = (name: string) => fs.readFileSync(path.join(import.meta.dirname, "fixtures", name), "utf8");
+  const codex = parseSessionText(fixture("codex-sanitized.jsonl"), "codex-sanitized.jsonl");
+  const claude = parseSessionText(fixture("claude-sanitized.jsonl"), "claude-sanitized.jsonl");
+
+  assert.equal(codex.provider, "codex");
+  assert.deepEqual(codex.filesChanged, ["src/index.ts"]);
+  assert.equal(claude.provider, "claude");
+  assert.deepEqual(claude.filesChanged, ["src/index.ts"]);
+  const output = JSON.stringify({ codex, claude });
+  assert.doesNotMatch(output, /FIXTURE_PRIVATE/);
+  assert.doesNotMatch(output, /workspace[\\/]sample/);
+});
+
+test("handles a large synthetic session without changing metric semantics", () => {
+  const line = JSON.stringify({ type: "event_msg", payload: { type: "agent_message", message: "LARGE_PRIVATE_TEXT" } });
+  const text = `${JSON.stringify({ type: "session_meta", payload: { cwd: "/repo" } })}\n${Array.from({ length: 20_000 }, () => line).join("\n")}`;
+  const summary = parseSessionText(text, "large.jsonl", "codex");
+  assert.equal(summary.records, 20_001);
+  assert.equal(summary.messages.assistant, 20_000);
+  assert.ok(!JSON.stringify(summary).includes("LARGE_PRIVATE_TEXT"));
 });

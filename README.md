@@ -1,8 +1,10 @@
 <div align="center">
-  <img src="docs/hero.svg" alt="agent-session-compare — same task, different agent" width="820">
+  <img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/hero.svg" alt="agent-session-compare — same task, different agent" width="820">
   <p><strong>A privacy-first diff for Codex and Claude Code sessions.</strong></p>
   <p>
     <a href="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml"><img src="https://github.com/zhaoryder/agent-session-compare/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="https://www.npmjs.com/package/agent-session-compare"><img src="https://img.shields.io/npm/v/agent-session-compare?color=ff73b5" alt="npm version"></a>
+    <a href="https://www.npmjs.com/package/agent-session-compare"><img src="https://img.shields.io/npm/dm/agent-session-compare?color=61dafb" alt="npm downloads"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6ee7a8" alt="MIT License"></a>
     <img src="https://img.shields.io/badge/telemetry-none-61dafb" alt="No telemetry">
   </p>
@@ -14,26 +16,33 @@ You ran the same task with two coding agents. One felt faster. The other looked 
 
 ## Try it in 30 seconds
 
-No account, API key, or session file is needed for the built-in demo:
+No account, API key, or session file is needed for the built-in demo. After the npm package is published, the short command will be:
 
 ```bash
-npx --yes github:zhaoryder/agent-session-compare demo
+npx agent-session-compare demo
 ```
+
+Until then, use the repository build: `npx --yes github:zhaoryder/agent-session-compare demo`.
 
 Export the same comparison as a single offline HTML file:
 
 ```bash
-npx --yes github:zhaoryder/agent-session-compare demo --html report.html
+npx agent-session-compare demo --html report.html
 ```
+
+<img src="https://raw.githubusercontent.com/zhaoryder/agent-session-compare/main/docs/report-demo.png" alt="Standalone HTML comparison report showing Codex and Claude session metrics" width="900">
 
 When both tools are installed locally, compare their newest sessions:
 
 ```bash
-npx --yes github:zhaoryder/agent-session-compare latest \
+npx agent-session-compare latest \
   --left codex \
   --right claude \
   --html report.html
 ```
+
+> [!WARNING]
+> `latest` selects sessions by file modification time. It cannot know whether both sessions performed the same task. Verify the source sessions before interpreting the comparison.
 
 Or point at any two logs:
 
@@ -59,7 +68,7 @@ Metrics are intentionally descriptive. A shorter session is not automatically a 
 
 Session logs can contain source code, prompts, tool output, and local paths. This tool is designed around that risk:
 
-- It runs locally and makes no network requests.
+- After installation, comparisons run entirely locally and the CLI makes no runtime network requests.
 - Prompt, response, reasoning, tool input, and tool output text are never copied into reports.
 - Absolute paths outside the recorded working directory become `<absolute>/filename`.
 - JSON and HTML use the same redacted summary schema.
@@ -83,7 +92,7 @@ Default discovery paths:
 - Codex: `~/.codex/sessions/**/*.jsonl`
 - Claude Code: `~/.claude/projects/**/*.jsonl`
 
-Schemas evolve. Unknown records are skipped, malformed lines are counted, and the report includes warnings instead of silently inventing metrics.
+Schemas evolve. Unknown records are skipped, malformed lines are counted, and the report includes warnings instead of silently inventing metrics. The current parser reads each input file into memory; avoid using it on untrusted or unexpectedly large logs.
 
 ## Why this exists
 

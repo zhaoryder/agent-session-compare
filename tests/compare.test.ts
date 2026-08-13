@@ -23,4 +23,5 @@ test("renders terminal and standalone HTML reports", () => {
   assert.match(html, /Local-only/);
   assert.match(html, /application\/json/);
   assert.doesNotMatch(html, /https?:\/\/[^<]*\.(js|css)/);
+  assert.doesNotMatch(html, /FIXTURE_PRIVATE|\/Users\/|C:\\workspace/);
 });

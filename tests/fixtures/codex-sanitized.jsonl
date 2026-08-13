@@ -1,0 +1,10 @@
+{"type":"session_meta","payload":{"id":"redacted","timestamp":"2026-08-13T00:00:00.000Z","cwd":"/workspace/sample","cli_version":"0.1.0","source":"cli"}}
+{"type":"turn_context","payload":{"turn_id":"turn-redacted","cwd":"/workspace/sample","model":"redacted"}}
+{"type":"event_msg","payload":{"type":"user_message","message":"FIXTURE_PRIVATE_PROMPT"}}
+{"type":"event_msg","payload":{"type":"task_started","turn_id":"turn-redacted","started_at":"2026-08-13T00:00:01.000Z"}}
+{"type":"response_item","payload":{"type":"custom_tool_call","call_id":"call-redacted","name":"apply_patch","input":"FIXTURE_PRIVATE_TOOL_INPUT"}}
+{"type":"response_item","payload":{"type":"custom_tool_call_output","call_id":"call-redacted","output":"{\"success\":true,\"private\":\"FIXTURE_PRIVATE_OUTPUT\"}"}}
+{"type":"event_msg","payload":{"type":"patch_apply_end","success":true,"changes":{"/workspace/sample/src/index.ts":{"kind":"update"}}}}
+{"type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":240,"cached_input_tokens":100,"output_tokens":80,"reasoning_output_tokens":20,"total_tokens":340}}}}
+{"type":"event_msg","payload":{"type":"agent_message","message":"FIXTURE_PRIVATE_RESPONSE"}}
+{"type":"event_msg","payload":{"type":"task_complete","turn_id":"turn-redacted","started_at":"2026-08-13T00:00:01.000Z","completed_at":"2026-08-13T00:00:05.000Z","duration_ms":4000}}
